@@ -3,7 +3,7 @@ import speech_recognition  as sr # type: ignore
 import wikipedia # type: ignore
 import webbrowser
 import os
-
+# pip install pyttsx3 speech_recognition wikipedia
 # Initialize pyttsx3 engine
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
