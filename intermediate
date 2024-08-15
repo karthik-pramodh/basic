@@ -1,0 +1,98 @@
+import pyttsx3 # type: ignore
+import speech_recognition  as sr # type: ignore
+import wikipedia # type: ignore
+import webbrowser
+import os
+
+# Initialize pyttsx3 engine
+engine = pyttsx3.init("sapi5")
+voices = engine.getProperty("voices")
+engine.setProperty('voice', voices[1].id)  # 1 for female voice, 0 for male voice
+
+def speak(audio):
+    """Convert text to speech."""
+    engine.say(audio)
+    engine.runAndWait()
+
+def take_command():
+    """Capture voice input from the user and convert it to text."""
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+    try:
+        print("Recognizing...")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"User said: {query}\n")
+    except Exception as e:
+        print(e)
+        speak("I didn't understand. Could you please repeat that?")
+        return "None"
+    return query
+
+if __name__ == '_main_':
+    speak("Amigo assistance activated")
+    speak("How can I help you?")
+    
+    while True:
+        query = take_command().lower()
+
+        # Search Wikipedia
+        if 'wikipedia' in query:
+            speak("Searching Wikipedia...")
+            query = query.replace("wikipedia", '')
+            results = wikipedia.summary(query, sentences=2)
+            speak("According to Wikipedia")
+            speak(results)
+
+        # Identify the assistant
+        elif 'who are you' in query or 'what is your name' in query:
+            speak("I am Amigo, your personal assistant developed by Jaspreet Singh")
+
+        # Open websites
+        elif 'open youtube' in query:
+            speak("Opening YouTube")
+            webbrowser.open("https://www.youtube.com")
+        elif 'open google' in query:
+            speak("Opening Google")
+            webbrowser.open("https://www.google.com")
+        elif 'open github' in query:
+            speak("Opening GitHub")
+            webbrowser.open("https://www.github.com")
+        elif 'open stackoverflow' in query:
+            speak("Opening Stack Overflow")
+            webbrowser.open("https://www.stackoverflow.com")
+        elif 'open spotify' in query:
+            speak("Opening Spotify")
+            webbrowser.open("https://www.spotify.com")
+
+        # Open WhatsApp desktop application
+        elif 'open whatsapp' in query:
+            speak("Opening WhatsApp")
+            loc = "C:\\Users\\jaspr\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
+            if os.path.exists(loc):
+                os.startfile(loc)
+            else:
+                speak("WhatsApp is not installed in the specified location.")
+
+        # Open music (handled by Spotify in this case)
+        elif 'play music' in query:
+            speak("Playing music on Spotify")
+            webbrowser.open("https://www.spotify.com")
+
+        # Open local disks
+        elif 'open local disk d' in query:
+            speak("Opening Local Disk D")
+            os.startfile("D:\\")
+        elif 'open local disk c' in query:
+            speak("Opening Local Disk C")
+            os.startfile("C:\\")
+        elif 'open local disk e' in query:
+            speak("Opening Local Disk E")
+            os.startfile("E:\\")
+
+        # Exit the assistant
+        elif 'sleep' in query or 'exit' in query:
+            speak("Goodbye!")
+            exit(0)
